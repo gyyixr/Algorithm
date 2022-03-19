@@ -15,11 +15,11 @@ public class QuickSort {
     }
     int k = a[i];
 
-    while (i < j) {
-      while (i < j && a[j] > k) { // 找出小的数
+    while (i < j) {//这里要<
+      while (i < j && a[j] >= k) { // 找出小的数,这里要 >=
         j--;
       }
-      while (i < j && a[i] <= k) { // 找出大的数
+      while (i < j && a[i] <= k) { // 找出大的数,这里要 <=
         i++;
       }
       if (i < j) { // 交换
@@ -40,7 +40,7 @@ public class QuickSort {
   }
 
   public static void main(String[] args) {
-    int[] arr = new int[] {5, 9, 7, 4, 3, 7, 6, 1, 9, 9, 7, 4};
+    int[] arr = new int[] {5,5, 9, 7, 4, 3, 7, 6, 1, 9, 9, 7, 4};
     System.out.println(Arrays.toString(arr));
     sort(arr);
     System.out.println(Arrays.toString(arr));
