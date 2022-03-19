@@ -57,6 +57,18 @@ public class singleNumber137 {
         return ans;
     }
 
-
-
+  /**
+   * &: 0&num = 0, num&num = num; 1&num = 1; 0&1 = 0 |: 0|num = 0; num|num = num; 1|num = num; 0|1 =
+   * 1
+   *
+   * <p>步骤： 进来第一个数字 (1). twos |= ones & num 刚开始ones=0, ones和num不一样，ones&num = 0， two=0， two|0 = 0
+   * 如果ones和num一样的话，也就是ones&num = 1， two|=1相当于0|1=1，也就是这个数字出现了两遍 (2). ones ^= num，这时候ones是0，ones^num
+   * = num (3). threes = ones & twos ones = num, two = 0, ones & twos =0, threes = 0 (4). ~threes =
+   * ~0 = -1， ones=num，num & -1 = num (5). ~threes = ~0 = -1，twos=0， twos = 0 进来第二个相同数字 (1).
+   * twos|=ones & num twos = 0, ones = num, ones & num = 1, twos|1 = 1 (2). ones = num ^ num = 0
+   * (3). threes = ones & twos = 0 & 1 = 0 (4). ones = ones & ~threes = 0 & ~0 = 0 (5). twos = twos
+   * & ~threes = 1 & ~0 = 1 进来第三个相同数字 (1). twos |= ones & num twos = 1, ones = 0, ones & num = num,
+   * two|num = num (2). ones = 0 ^ num = num (3). threes = ones & twos = num & num = num (4). ones =
+   * ones & ~threes = num & ~num = 0 (5). twos = twos & ~threes = num & ~num = 0
+   */
 }
