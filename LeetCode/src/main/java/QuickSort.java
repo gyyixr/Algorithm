@@ -10,7 +10,7 @@ public class QuickSort {
   public static void sort(int[] a, int low, int height) {
     int i = low;
     int j = height;
-    if (i > j) { // 放在k之前，防止下标越界
+    if (i > j) { // 放在k之前，防止下标越界，这里要严格大于，因为i和j一定要会和，即i=j会发生
       return;
     }
     int k = a[i];
