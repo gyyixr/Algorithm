@@ -3,20 +3,18 @@ import java.util.Map;
 
 class LRUCache {
 
-    // 双向链表节点定义
-    class Node {
-        int key;
-        int val;
-        Node prev;
-        Node next;
+    static class Node {
+        public int key;
+        public int val;
+        public Node prev;
+        public Node next;
     }
 
-    private int capacity;
-    //保存链表的头节点和尾节点
+    private final int capacity;
     private Node first;
     private Node last;
 
-    private Map<Integer, Node> map;
+    private final Map<Integer, Node> map;
 
     public LRUCache(int capacity) {
         this.capacity = capacity;
@@ -25,7 +23,6 @@ class LRUCache {
 
     public int get(int key) {
         Node node = map.get(key);
-        //为空返回-1
         if (node == null) {
             return -1;
         }
@@ -58,7 +55,7 @@ class LRUCache {
             node.key = key;
             node.val = value;
 
-            if(map.size() == capacity) {
+            if (map.size() == capacity) {
                 removeLast();
             }
 
@@ -100,7 +97,8 @@ class LRUCache {
         cache.put(1, 1);
         cache.put(2, 2);
         cache.put(3, 3);
-        cache.get(1);
+        int i = cache.get(1);
+        System.out.println(i);
         cache.put(4, 3);
         System.out.println(cache);
     }
