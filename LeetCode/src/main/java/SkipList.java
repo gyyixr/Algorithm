@@ -56,7 +56,7 @@ public class SkipList {
     }
 
     public void delete(int value) {
-        Node[] update = new Node[MAX_LEVEL];
+        Node[] update = new Node[level];
         Node current = header;
 
         for (int i = level - 1; i >= 0; i--) {
@@ -104,6 +104,7 @@ public class SkipList {
             }
             System.out.println();
         }
+        System.out.printf("level:%s\n", level);
         System.out.println();
     }
 
