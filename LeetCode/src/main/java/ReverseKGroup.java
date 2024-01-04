@@ -9,7 +9,7 @@ public class ReverseKGroup {
     ListNode pre, cur, nxt;
     pre = null;
     cur = a;
-    nxt = a;
+    nxt = null;
     while (cur != null) {
       nxt = cur.next;
       // 逐个结点反转
@@ -26,7 +26,7 @@ public class ReverseKGroup {
     ListNode pre, cur, nxt;
     pre = null;
     cur = a;
-    nxt = a;
+    nxt = null;
     // while 终止的条件改一下就行了
     while (cur != b) {
       nxt = cur.next;
@@ -57,7 +57,7 @@ public class ReverseKGroup {
     // 反转前 k 个元素
     ListNode newHead = reverse(a, b);
     // 递归反转后续链表并连接起来
-    a.next = reverseKGroup(b, k);
+    head.next = reverseKGroup(b, k);
     return newHead;
   }
 }
