@@ -32,6 +32,7 @@ func NewSkipList() *SkipList {
 
 // randomLevel 生成一个随机层数
 func randomLevel() int {
+	//这里的level类似于数组的length,而不是下标index,表示一共有几层
 	level := 1
 	for rand.Float64() < 0.5 && level < maxLevel {
 		level++
@@ -41,6 +42,7 @@ func randomLevel() int {
 
 // Insert 向跳表中插入一个元素
 func (sl *SkipList) Insert(value int) {
+	// update是插入元素的左边的元素
 	update := make([]*Node, maxLevel)
 	current := sl.header
 
