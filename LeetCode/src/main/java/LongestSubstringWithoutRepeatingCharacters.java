@@ -26,6 +26,7 @@ public class LongestSubstringWithoutRepeatingCharacters {
 
     public static void main(String[] args) {
         String s = "abcdabcbb";
+        s.contains("");
         System.out.println(lengthOfLongestSubstring(s));
         System.out.println(lengthOfLongestSubstring1(s));// 输出: 3
     }
