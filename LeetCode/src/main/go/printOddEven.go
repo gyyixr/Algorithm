@@ -2,45 +2,37 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
+var POOL = 100
+
+func groutine1(p chan int) {
+
+	for i := 1; i <= POOL; i++ {
+		p <- i
+		if i%2 == 1 {
+			fmt.Println("groutine-1:", i)
+		}
+	}
+}
+
+func groutine2(p chan int) {
+
+	for i := 1; i <= POOL; i++ {
+		<-p
+		if i%2 == 0 {
+			fmt.Println("groutine-2:", i)
+		}
+	}
+}
+
 func main() {
-	// 使用一个无缓冲通道来进行协程间的同步
-	ch := make(chan struct{}, 1)
-	var wg sync.WaitGroup
+	msg := make(chan int)
 
-	// 启动两个goroutine，一个打印奇数，一个打印偶数
-	wg.Add(2)
-	// 向通道发送初始信号，让奇数goroutine先执行
-	ch <- struct{}{}
-	go printOdd(ch, &wg)
-	go printEven(ch, &wg)
+	go groutine1(msg)
+	go groutine2(msg)
 
-	// 等待两个goroutine执行完毕
-	wg.Wait()
-}
+	time.Sleep(time.Second * 1)
 
-func printOdd(ch chan struct{}, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for i := 1; i <= 10; i += 2 {
-		// 等待通道接收到信号
-		<-ch
-		fmt.Println("Odd:", i)
-		// 发送信号给偶数goroutine
-		ch <- struct{}{}
-	}
-}
-
-func printEven(ch chan struct{}, wg *sync.WaitGroup) {
-	time.Sleep(1 * time.Millisecond)
-	defer wg.Done()
-	for i := 2; i <= 10; i += 2 {
-		// 等待通道接收到信号
-		<-ch
-		fmt.Println("Even:", i)
-		// 发送信号给奇数goroutine
-		ch <- struct{}{}
-	}
 }
