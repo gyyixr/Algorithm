@@ -1,3 +1,5 @@
+package java;
+
 /*
 给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
 
@@ -24,7 +26,7 @@
 因此没有符合条件的子字符串，返回空字符串。
  */
 public class LeetCode_76_minWindow {
-    public String minWindow(String s, String t) {
+    public static String minWindow(String s, String t) {
         if (s == null || s.length() == 0 || t == null || t.length() == 0){
             return "";
         }
@@ -59,5 +61,9 @@ public class LeetCode_76_minWindow {
             r++;
         }
         return size == Integer.MAX_VALUE ? "" : s.substring(start, start + size);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(LeetCode_76_minWindow.minWindow("ADOBECODEBANC", "ABC"));
     }
 }
