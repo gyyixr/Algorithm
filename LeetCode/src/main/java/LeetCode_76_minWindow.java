@@ -29,9 +29,10 @@ public class LeetCode_76_minWindow {
         if (s == null || s.length() == 0 || t == null || t.length() == 0){
             return "";
         }
-        int[] need = new int[128];
+        int[] need = new int[128];//ascii编码[0,127]
         //记录需要的字符的个数
         for (int i = 0; i < t.length(); i++) {
+            //字母char都是ascii编码
             need[t.charAt(i)]++;
         }
         //l是当前左边界，r是当前右边界，size记录窗口大小，count是需求的字符个数，start是最小覆盖串开始的index
