@@ -22,6 +22,7 @@ public class LeetCode_227_calculate {
                 num = 0;
             }
         }
+        System.out.println(stack);
         return stack.stream().mapToInt(Integer::intValue).sum();
     }
 
