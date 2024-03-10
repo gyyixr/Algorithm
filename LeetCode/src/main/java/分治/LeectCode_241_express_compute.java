@@ -1,4 +1,4 @@
-package fenzhi;
+package 分治;
 
 import java.util.ArrayList;
 import java.util.HashMap;
