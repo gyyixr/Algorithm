@@ -23,6 +23,7 @@ public class KthSmallest {
 
     private int count = 0;
 
+    //BST的中序遍历正好是排好序的
     public TreeNode KthNode(TreeNode pRoot, int k) {
         if (pRoot == null) {
             return null;
