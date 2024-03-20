@@ -28,16 +28,21 @@ public class KthSmallest {
         if (pRoot == null) {
             return null;
         }
-        TreeNode node = KthNode(pRoot.left, k);
-        if (node != null) {
-            return node;
+        //中序-左子树先遍历-最小；如果递归左子树已经有结果了就不用继续遍历了
+        TreeNode nodeLeft = KthNode(pRoot.left, k);
+        if (nodeLeft != null) {
+            return nodeLeft;
         }
+
+        //中序-中间root节点
         count++;
         if (count == k) {
             return pRoot;
         }
-        node = KthNode(pRoot.right, k);
-        return node;
+
+        //中序-右子树先遍历-最大
+        TreeNode nodeRight = KthNode(pRoot.right, k);
+        return nodeRight;
     }
 
     public static void main(String[] args) {
@@ -46,6 +51,6 @@ public class KthSmallest {
         root.left = new TreeNode(1);
         root.right = new TreeNode(4);
         root.left.right = new TreeNode(2);
-        System.out.println(solution.KthNode(root, 1).val);
+        System.out.println(solution.KthNode(root, 3).val);
     }
 }
