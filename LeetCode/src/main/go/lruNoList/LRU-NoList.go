@@ -26,7 +26,7 @@ func NewLRUCache(capacity int) *LRUCache {
 	lru := &LRUCache{
 		size:     0,
 		capacity: capacity,
-		cacheMap: make(map[int]*Node),
+		cacheMap: make(map[int]*Node, capacity),
 	}
 	lru.head = &Node{}
 	lru.tail = &Node{}
