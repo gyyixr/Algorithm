@@ -6,6 +6,7 @@ import (
 
 // LRUCache represents a simple LRU cache.
 type LRUCache struct {
+	size     int
 	capacity int
 	cacheMap map[int]*Node
 	head     *Node
@@ -22,45 +23,40 @@ type Node struct {
 
 // NewLRUCache creates a new LRUCache with the specified capacity.
 func NewLRUCache(capacity int) *LRUCache {
-	return &LRUCache{
+	lru := &LRUCache{
+		size:     0,
 		capacity: capacity,
 		cacheMap: make(map[int]*Node),
 	}
+	lru.head = &Node{}
+	lru.tail = &Node{}
+	lru.head.next = lru.tail
+	lru.tail.prev = lru.head
+	return lru
 }
 
 // moveToHead moves a node to the front of the linked list.
 func (lru *LRUCache) moveToHead(node *Node) {
-	if node == lru.head {
-		return
-	}
-
-	if node == lru.tail {
-		lru.tail = node.prev
-	} else {
-		node.next.prev = node.prev
-	}
-
-	node.prev.next = node.next
-	node.prev = nil
-	node.next = lru.head
-	lru.head.prev = node
-	lru.head = node
+	lru.removeNode(node)
+	lru.addToHead(node)
 }
 
-// removeTail removes the last node from the linked list.
-func (lru *LRUCache) removeTail() {
-	if lru.tail == nil {
-		return
-	}
+func (lru *LRUCache) removeNode(node *Node) {
+	node.next.prev = node.prev
+	node.prev.next = node.next
+}
 
-	delete(lru.cacheMap, lru.tail.key)
+func (lru *LRUCache) addToHead(node *Node) {
+	node.prev = lru.head
+	node.next = lru.head.next
+	lru.head.next.prev = node
+	lru.head.next = node
+}
 
-	if lru.head == lru.tail {
-		lru.head, lru.tail = nil, nil
-	} else {
-		lru.tail = lru.tail.prev
-		lru.tail.next = nil
-	}
+func (lru *LRUCache) removeTail() *Node {
+	prev := lru.tail.prev
+	lru.removeNode(prev)
+	return prev
 }
 
 // Get retrieves the value associated with the key from the cache.
@@ -75,24 +71,17 @@ func (lru *LRUCache) Get(key int) int {
 // Put inserts a key-value pair into the cache.
 func (lru *LRUCache) Put(key, value int) {
 	if node, ok := lru.cacheMap[key]; ok {
-		// Update the existing entry
 		node.value = value
 		lru.moveToHead(node)
 	} else {
-		// Add a new entry
-		newNode := &Node{key, value, nil, nil}
+		newNode := &Node{key: key, value: value}
 		lru.cacheMap[key] = newNode
-
-		if lru.head == nil {
-			lru.head, lru.tail = newNode, newNode
-		} else {
-			newNode.next = lru.head
-			lru.head.prev = newNode
-			lru.head = newNode
-		}
-
-		if len(lru.cacheMap) > lru.capacity {
-			lru.removeTail()
+		lru.addToHead(newNode)
+		lru.size++
+		if lru.size > lru.capacity {
+			needRemoveTail := lru.removeTail()
+			delete(lru.cacheMap, needRemoveTail.key)
+			lru.size--
 		}
 	}
 }
@@ -100,8 +89,8 @@ func (lru *LRUCache) Put(key, value int) {
 // PrintCacheState prints the current state of the cache.
 func (lru *LRUCache) PrintCacheState() {
 	fmt.Println("Cache State:")
-	node := lru.head
-	for node != nil {
+	node := lru.head.next
+	for node.next != nil {
 		fmt.Printf("%d: %d\n", node.key, node.value)
 		node = node.next
 	}
@@ -121,7 +110,6 @@ func main() {
 	lruCache.PrintCacheState()
 
 	fmt.Println("Value for key 2:", lruCache.Get(2))
-	lruCache.PrintCacheState()
 
 	lruCache.Put(4, 40) // This will trigger eviction of the least recently used element (key 1)
 	lruCache.PrintCacheState()
