@@ -68,6 +68,7 @@ public class LeetCode_93_restoreIpAddresses {
         for (int i = startIndex; i < s.length(); i++) {
             if (isValid(s, startIndex, i)) {
                 s.insert(i + 1, '.');
+                //这里+2是因为当前的segment已经判断符合条件，后面要跟一个.
                 backTracking(s, i + 2, dotCount + 1);
                 s.deleteCharAt(i + 1);
             } else {
@@ -79,6 +80,7 @@ public class LeetCode_93_restoreIpAddresses {
     //[start, end]
     private boolean isValid(StringBuilder s, int start, int end) {
         if (start > end) return false;
+        //注意前导0的判断,IP只能有0.0.0.0这一种
         if (s.charAt(start) == '0' && start != end) return false;
         return Integer.parseInt(s.substring(start, end + 1)) <= 255;
     }
