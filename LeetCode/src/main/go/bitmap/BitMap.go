@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 )
 
 // BitMap 是一个结构体，使用一个整数数组来存储位图
@@ -67,4 +68,5 @@ func main() {
 	bm.Flip(10) // 翻转第10位
 
 	fmt.Printf("Bit at position 10 after flip: %v\n", bm.Test(10)) // 输出：false
+	fmt.Println(runtime.NumGoroutine())
 }
