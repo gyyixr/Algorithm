@@ -12,6 +12,7 @@
         <module>DoublePointer</module>
         <module>LeetCode</module>
         <module>Rocksdb</module>
+        <module>Demo</module>
     </modules>
 
     <properties>
