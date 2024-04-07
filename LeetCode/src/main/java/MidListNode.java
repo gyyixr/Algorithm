@@ -14,7 +14,7 @@ public class MidListNode {
         return slow;
     }
 
-    //偶数个节点时返回靠右的那个
+    //偶数个节点时返回靠左的那个
     public static ListNode middleRightNode(ListNode head) {
         if (head == null) {
             return null;
@@ -36,8 +36,8 @@ public class MidListNode {
         root.next.next.next = new ListNode(4);
         System.out.println(middleLeftNode(root).val);
         System.out.println(middleRightNode(root).val);
-        root.next.next.next.next = new ListNode(5);
-        System.out.println(middleLeftNode(root).val);
-        System.out.println(middleRightNode(root).val);
+//        root.next.next.next.next = new ListNode(5);
+//        System.out.println(middleLeftNode(root).val);
+//        System.out.println(middleRightNode(root).val);
     }
 }
