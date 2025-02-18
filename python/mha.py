@@ -26,11 +26,6 @@ class MultiHeadAttention(nn.Module):
         # Scale factor
         self.scale = self.head_dim ** 0.5
 
-    def generate_causal_mask(self, seq_len):
-        # 生成 causal mask (上三角矩阵)
-        mask = torch.triu(torch.ones(seq_len, seq_len), diagonal=1)  # 上三角
-        return mask.unsqueeze(0).unsqueeze(0)  # 增加 batch_size 和 num_heads 维度
-
     def generate_padding_mask(self, seq_len, padding_mask):
         # padding_mask: shape (batch_size, seq_len)
         # 生成 padding mask，确保填充部分不会影响注意力
@@ -55,12 +50,6 @@ class MultiHeadAttention(nn.Module):
 
         # 计算缩放点积注意力
         scores = torch.matmul(Q, K.transpose(-2, -1)) / self.scale  # (batch_size, num_heads, seq_len, seq_len)
-
-        # 生成 Causal Mask (上三角 mask)
-        causal_mask = self.generate_causal_mask(seq_len).to(scores.device)
-
-        # 将 Causal Mask 应用到 scores
-        scores = scores.masked_fill(causal_mask == 1, float('-inf'))
 
         # 如果有 Padding Mask，应用到 scores
         if padding_mask is not None:
