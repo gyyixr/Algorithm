@@ -2,24 +2,9 @@ package main
 
 import "container/list"
 
-type TreeNode struct {
-	Val   int
-	Right *TreeNode
-	Left  *TreeNode
-}
-
-/**
- type Element struct {
-    // 元素保管的值
-    Value interface{}
-    // 内含隐藏或非导出字段
-}
-
-func (l *List) Back() *Element
-前序遍历：中左右
-压栈顺序：右左中
- **/
-func preorderTraversal(root *TreeNode) []int {
+//后续遍历：左右中
+//压栈顺序：中右左
+func postorderTraversal(root *TreeNode) []int {
 	if root == nil {
 		return nil
 	}
@@ -29,7 +14,7 @@ func preorderTraversal(root *TreeNode) []int {
 	var node *TreeNode
 	for stack.Len() > 0 {
 		e := stack.Back()
-		stack.Remove(e)     //弹出元素
+		stack.Remove(e)
 		if e.Value == nil { // 如果为空，则表明是需要处理中间节点
 			e = stack.Back() //弹出元素（即中间节点）
 			stack.Remove(e)  //删除中间节点
@@ -38,16 +23,15 @@ func preorderTraversal(root *TreeNode) []int {
 			continue                    //继续弹出栈中下一个节点
 		}
 		node = e.Value.(*TreeNode)
-		//压栈顺序：右左中
+		//压栈顺序：中右左
+		stack.PushBack(node) //中间节点压栈后再压入nil作为中间节点的标志符
+		stack.PushBack(nil)
 		if node.Right != nil {
 			stack.PushBack(node.Right)
 		}
 		if node.Left != nil {
 			stack.PushBack(node.Left)
 		}
-		stack.PushBack(node) //中间节点压栈后再压入nil作为中间节点的标志符
-		stack.PushBack(nil)
 	}
 	return res
-
 }
