@@ -13,9 +13,9 @@ type BitMap struct {
 // NewBitMap 创建一个新的位图，指定大小（以位为单位）
 func NewBitMap(size uint) *BitMap {
 	// 计算需要多少个uint32来存储所有的位
-	capaity := (size + 31) / 32 * 4
+	capacity := (size + 31) / 32
 	return &BitMap{
-		data: make([]uint32, capaity),
+		data: make([]uint32, capacity),
 	}
 }
 
