@@ -162,3 +162,34 @@ func main() {
 	missing := findMissingNumbersBitmap(randomNumbers, maxNum)
 	fmt.Println("Missing numbers:", missing)
 }
+
+//这个优化版本使用了uint64而不是byte作为位图的基本单位，减少了内存访问次数，提高了性能。对于非常大的数据集，还可以考虑使用goroutine并行处理不同范围的数字检查。
+func findMissingNumbersOptimized(randomNumbers []int, maxNum int) []int {
+	// 使用更大的单位(如uint64)来减少内存访问次数
+	bitmapSize := (maxNum + 63) / 64
+	bitmap := make([]uint64, bitmapSize)
+
+	// 并行标记存在的数字(如果数据量很大)
+	for _, num := range randomNumbers {
+		if num < 1 || num > maxNum {
+			continue
+		}
+		index := (num - 1) / 64
+		bit := (num - 1) % 64
+		bitmap[index] |= 1 << bit
+	}
+
+	// 预分配缺失数组空间(假设缺失数量约为maxNum-len(randomNumbers))
+	missing := make([]int, 0, maxNum-len(randomNumbers))
+
+	// 并行检查缺失数字(可以分多个goroutine处理不同范围)
+	for num := 1; num <= maxNum; num++ {
+		index := (num - 1) / 64
+		bit := (num - 1) % 64
+		if (bitmap[index] & (1 << bit)) == 0 {
+			missing = append(missing, num)
+		}
+	}
+
+	return missing
+}
