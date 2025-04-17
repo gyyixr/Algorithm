@@ -10,7 +10,9 @@ func longestPalindrome(s string) string {
 	dp := make([][]bool, len(s))
 	for i := 0; i < len(s); i++ {
 		dp[i] = make([]bool, len(s))
+		dp[i][i] = true
 	}
+
 	for i := len(s) - 1; i >= 0; i-- {
 		for j := i; j < len(s); j++ {
 			if s[i] == s[j] {
