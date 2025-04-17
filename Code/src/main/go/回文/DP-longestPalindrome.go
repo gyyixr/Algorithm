@@ -4,54 +4,31 @@ package main
 import "fmt"
 
 func longestPalindrome(s string) string {
-	length := len(s)
-	if length < 2 {
-		return s
+	maxLen := 0
+	left := 0
+	length := 0
+	dp := make([][]bool, len(s))
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
 	}
-
-	maxLen := 1
-	begin := 0
-	// dp[i][j] 表示 s[i..j] 是否是回文串
-	dp := make([][]bool, length)
-	// 初始化：所有长度为 1 的子串都是回文串
-	for i := 0; i < length; i++ {
-		dp[i] = make([]bool, length)
-		dp[i][i] = true
-	}
-
-	// 转换为字符数组便于访问
-	charArray := []rune(s)
-
-	// 递推开始
-	// 先枚举子串长度
-	for L := 2; L <= length; L++ {
-		// 枚举左边界
-		for i := 0; i < length; i++ {
-			// 由 L 和 i 可以确定右边界，即 j - i + 1 = L 得
-			j := L + i - 1
-			// 如果右边界越界，就可以退出当前循环
-			if j >= length {
-				break
-			}
-
-			if charArray[i] != charArray[j] {
-				dp[i][j] = false
-			} else {
-				if j-i < 3 {
+	for i := len(s) - 1; i >= 0; i-- {
+		for j := i; j < len(s); j++ {
+			if s[i] == s[j] {
+				if j-i <= 1 { // 情况一和情况二
+					length = j - i
 					dp[i][j] = true
-				} else {
-					dp[i][j] = dp[i+1][j-1]
+				} else if dp[i+1][j-1] { // 情况三
+					length = j - i
+					dp[i][j] = true
 				}
 			}
-
-			// 只要 dp[i][j] == true 成立，就表示子串 s[i..j] 是回文，此时记录回文长度和起始位置
-			if dp[i][j] && j-i+1 > maxLen {
-				maxLen = j - i + 1
-				begin = i
-			}
+		}
+		if length > maxLen {
+			maxLen = length
+			left = i
 		}
 	}
-	return s[begin : begin+maxLen]
+	return s[left : left+maxLen+1]
 }
 
 func main() {
