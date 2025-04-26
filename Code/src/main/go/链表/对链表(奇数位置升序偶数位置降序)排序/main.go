@@ -37,6 +37,15 @@ func splitList(head *ListNode) (*ListNode, *ListNode) {
 	}
 
 	// 切断两个链表的尾部连接
+	/**
+	以 1 → 8 → 3 → 6 → 5 → 4 → 7 为例：
+	如果不切断尾部连接：
+	奇数链表：1 → 3 → 5 → 7（但 7.Next 可能仍然指向 nil，本例不影响）
+	偶数链表：8 → 6 → 4（但 4.Next 仍然指向 7，导致 4 → 7 → nil，错误！）
+	切断尾部连接后：
+	奇数链表：1 → 3 → 5 → 7 → nil（7.Next = nil）
+	偶数链表：8 → 6 → 4 → nil（4.Next = nil）
+	*/
 	if oddTail != nil {
 		oddTail.Next = nil
 	}
