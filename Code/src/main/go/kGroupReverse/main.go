@@ -9,10 +9,10 @@ type ListNode struct {
 }
 
 // 反转整个链表
-func reverse(a *ListNode) *ListNode {
+func reverse(head *ListNode) *ListNode {
 	var pre, cur, nxt *ListNode
 	pre = nil
-	cur = a
+	cur = head
 	nxt = nil
 	for cur != nil {
 		nxt = cur.Next
