@@ -2,8 +2,14 @@ package main
 
 import "container/list"
 
-//后续遍历：左右中
-//压栈顺序：中右左
+type TreeNode struct {
+	Val   int
+	Right *TreeNode
+	Left  *TreeNode
+}
+
+// 后续遍历：左右中
+// 压栈顺序：中右左
 func postorderTraversal(root *TreeNode) []int {
 	if root == nil {
 		return nil
