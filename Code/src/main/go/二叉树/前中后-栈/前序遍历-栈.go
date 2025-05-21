@@ -8,17 +8,21 @@ type TreeNode struct {
 	Left  *TreeNode
 }
 
-/**
- type Element struct {
-    // 元素保管的值
-    Value interface{}
-    // 内含隐藏或非导出字段
-}
+/*
+*
+
+	 type Element struct {
+	    // 元素保管的值
+	    Value interface{}
+	    // 内含隐藏或非导出字段
+	}
 
 func (l *List) Back() *Element
 前序遍历：中左右
 压栈顺序：右左中
- **/
+
+	*
+*/
 func preorderTraversal(root *TreeNode) []int {
 	if root == nil {
 		return nil
