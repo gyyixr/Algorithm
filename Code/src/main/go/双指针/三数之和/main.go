@@ -1,10 +1,14 @@
 package main
 
-import "sort"
+import (
+	"fmt"
+)
 
 func threeSum(nums []int) [][]int {
-	sort.Ints(nums)
-	res := [][]int{}
+	nums = mergeSort(nums)
+	//sort.Ints(nums) // 使用内置的排序函数
+	fmt.Println("排序后的数组:", nums)
+	var res [][]int
 	// 找出a + b + c = 0
 	// a = nums[i], b = nums[left], c = nums[right]
 	for i := 0; i < len(nums)-2; i++ {
@@ -45,4 +49,34 @@ func main() {
 	for _, triplet := range result {
 		println(triplet[0], triplet[1], triplet[2])
 	}
+}
+
+func mergeSort(nums []int) []int {
+	if len(nums) < 2 {
+		return nums
+	}
+
+	mid := len(nums) / 2
+
+	left := mergeSort(nums[:mid])
+	right := mergeSort(nums[mid:])
+	return merge(left, right)
+}
+
+func merge(left, right []int) []int {
+	result := make([]int, 0, len(left)+len(right))
+	i, j := 0, 0
+	for i < len(left) && j < len(right) {
+		if left[i] <= right[j] {
+			result = append(result, left[i])
+			i++
+		} else {
+			result = append(result, right[j])
+			j++
+		}
+	}
+
+	result = append(result, left[i:]...)
+	result = append(result, right[j:]...)
+	return result
 }
