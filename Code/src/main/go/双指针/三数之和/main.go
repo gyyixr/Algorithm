@@ -11,7 +11,7 @@ func threeSum(nums []int) [][]int {
 	var res [][]int
 	// 找出a + b + c = 0
 	// a = nums[i], b = nums[left], c = nums[right]
-	for i := 0; i < len(nums)-2; i++ {
+	for i := 0; i < len(nums)-2; i++ { // 这里是因为至少需要三个数
 		// 排序之后如果第一个元素已经大于零，那么无论如何组合都不可能凑成三元组，直接返回结果就可以了
 		n1 := nums[i]
 		if n1 > 0 {
