@@ -130,12 +130,12 @@ func (wf *Workflow) executeTask(taskID string, wg *sync.WaitGroup, errorsChan ch
 
 // detectCycle 检测工作流中是否存在循环依赖 (使用深度优先搜索)
 func (wf *Workflow) detectCycle() error {
-	visited := make(map[string]bool)        // 标记已访问的节点
-	recursionStack := make(map[string]bool) // 标记当前递归栈中的节点
+	visited := make(map[string]bool) // 标记已访问的节点
+	path := make(map[string]bool)    // 标记当前递归栈中的节点
 
 	for id := range wf.Tasks {
 		if !visited[id] {
-			if wf.isCyclicUtil(id, visited, recursionStack) {
+			if wf.isCyclicUtil(id, visited, path) {
 				return fmt.Errorf("cycle detected involving task %s", id)
 			}
 		}
@@ -143,9 +143,9 @@ func (wf *Workflow) detectCycle() error {
 	return nil
 }
 
-func (wf *Workflow) isCyclicUtil(taskID string, visited map[string]bool, recursionStack map[string]bool) bool {
-	visited[taskID] = true
-	recursionStack[taskID] = true
+func (wf *Workflow) isCyclicUtil(taskID string, visited map[string]bool, path map[string]bool) bool {
+	visited[taskID] = true // visited[depID] = true 通常是在进入节点 depID 的递归处理时就立即设置的，而不是在离开递归栈时设置。
+	path[taskID] = true    // 如果在遍历过程中，我们遇到了一个邻接节点 u，而这个节点 u 同时存在于 recursionStack 中 (path[u] = true)，那么就意味着我们找到了一个“回边”（back edge）。这条回边从当前节点指向了当前DFS路径上的一个祖先节点，从而形成了一个环。
 
 	task, exists := wf.Tasks[taskID]
 	if !exists {
@@ -154,15 +154,15 @@ func (wf *Workflow) isCyclicUtil(taskID string, visited map[string]bool, recursi
 
 	for _, depID := range task.Dependencies {
 		if !visited[depID] {
-			if wf.isCyclicUtil(depID, visited, recursionStack) {
+			if wf.isCyclicUtil(depID, visited, path) {
 				return true
 			}
-		} else if recursionStack[depID] {
+		} else if path[depID] {
 			return true // 在递归栈中再次遇到，说明有环
 		}
 	}
 
-	recursionStack[taskID] = false // 离开递归栈
+	path[taskID] = false // 离开递归栈
 	return false
 }
 
