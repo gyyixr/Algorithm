@@ -33,7 +33,7 @@ func largestRectangleArea(heights []int) int {
 }
 
 func main() {
-	input := []int{2, 1, 5, 6, 2, 3}
+	input := []int{2, 1, 5, 6, 2, 3, 4, 5}
 	fmt.Println(largestRectangleArea(input))
 	fmt.Println(largestRectangleArea1(input))
 }
@@ -60,7 +60,9 @@ func largestRectangleArea1(heights []int) int {
 	for i := 1; i < n; i++ {
 		j := i - 1
 		for j >= 0 && heights[j] >= heights[i] {
-			j = left[j]
+			//j = left[j]
+			//通过使用 j = left[j]，我们可以跳过那些已经被确定左边界的柱子，直接跳到下一个可能的候选者。这样可以减少不必要的比较，从而加速算法。
+			j--
 		}
 		left[i] = j
 	}
@@ -69,7 +71,8 @@ func largestRectangleArea1(heights []int) int {
 	for i := n - 2; i >= 0; i-- {
 		j := i + 1
 		for j < n && heights[j] >= heights[i] {
-			j = right[j]
+			//j = right[j]
+			j++
 		}
 		right[i] = j
 	}
