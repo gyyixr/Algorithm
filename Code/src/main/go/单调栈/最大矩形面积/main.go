@@ -45,14 +45,16 @@ func largestRectangleArea1(heights []int) int {
 	left, right := make([]int, n), make([]int, n)
 
 	// 初始化left数组
-	for i := 0; i < n; i++ {
-		left[i] = -1
-	}
+	//for i := 0; i < n; i++ {
+	//	left[i] = -1
+	//}
+	left[0] = -1
 
 	// 初始化right数组
-	for i := 0; i < n; i++ {
-		right[i] = n
-	}
+	//for i := 0; i < n; i++ {
+	//	right[i] = n
+	//}
+	right[n-1] = n
 
 	// 计算每个柱子左边第一个小于当前柱子的下标
 	for i := 1; i < n; i++ {
