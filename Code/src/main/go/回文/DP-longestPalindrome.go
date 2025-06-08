@@ -1,4 +1,4 @@
-//最长回文字串-DP
+// 最长回文字串-DP
 package main
 
 import "fmt"
@@ -14,7 +14,7 @@ func longestPalindrome(s string) string {
 	}
 
 	for i := len(s) - 1; i >= 0; i-- {
-		for j := i; j < len(s); j++ {
+		for j := i + 1; j < len(s); j++ {
 			if s[i] == s[j] {
 				if j-i <= 1 { // 情况一和情况二
 					length = j - i
