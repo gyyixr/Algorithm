@@ -1,3 +1,3 @@
 module Algorithm/Code/src/main/go
 
-go 1.17.2
+go 1.23
