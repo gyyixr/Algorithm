@@ -38,3 +38,11 @@ func dfs(s string, start int) {
 		}
 	}
 }
+
+func main() {
+	s := "25525511135"
+	res := restoreIpAddresses(s)
+	for _, v := range res {
+		println(v)
+	}
+}
