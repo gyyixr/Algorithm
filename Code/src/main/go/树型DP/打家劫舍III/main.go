@@ -50,4 +50,39 @@ func main() {
 	// 调用rob函数并打印结果
 	maxMoney := rob(root)
 	fmt.Printf("可以偷窃的最大金额是：%d\n", maxMoney)
+	fmt.Println(rob1(root))
+}
+
+// 纯递归解法
+var umap = make(map[*TreeNode]int)
+
+func rob1(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	if root.Left == nil && root.Right == nil {
+		return root.Val
+	}
+	if val, ok := umap[root]; ok {
+		return val // 如果umap里已经有记录则直接返回
+	}
+	// 偷父节点
+	val1 := root.Val
+	if root.Left != nil {
+		val1 += rob(root.Left.Left) + rob(root.Left.Right) // 跳过root->left，相当于不考虑左孩子了
+	}
+	if root.Right != nil {
+		val1 += rob(root.Right.Left) + rob(root.Right.Right) // 跳过root->right，相当于不考虑右孩子了
+	}
+	// 不偷父节点
+	val2 := rob(root.Left) + rob(root.Right) // 考虑root的左右孩子
+	umap[root] = max(val1, val2)             // umap记录一下结果
+	return max(val1, val2)
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
 }
