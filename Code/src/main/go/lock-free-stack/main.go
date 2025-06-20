@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
-	"unsafe"
 )
 
 // node 是链表中的节点
@@ -15,8 +14,8 @@ type node struct {
 
 // LockFreeStack 是一个无锁栈结构体
 type LockFreeStack struct {
-	// top 指向栈顶元素，我们必须使用原子操作来访问它
-	top unsafe.Pointer // 仍然指向 *node
+	// top 指向栈顶元素，使用 atomic.Pointer 进行原子操作
+	top atomic.Pointer[node]
 }
 
 // NewLockFreeStack 创建一个新的无锁栈
@@ -25,19 +24,15 @@ func NewLockFreeStack() *LockFreeStack {
 }
 
 // loadTop 原子地加载栈顶节点。
-// 这个辅助方法封装了 atomic.LoadPointer 和 unsafe.Pointer 的转换。
+// 这个辅助方法封装了 atomic.Pointer 的 Load 操作。
 func (s *LockFreeStack) loadTop() *node {
-	p := atomic.LoadPointer(&s.top)
-	return (*node)(p)
+	return s.top.Load()
 }
 
 // casTop 原子地执行比较并交换操作来更新栈顶。
-// 这个辅助方法封装了 atomic.CompareAndSwapPointer 和 unsafe.Pointer 的转换。
+// 这个辅助方法封装了 atomic.Pointer 的 CompareAndSwap 操作。
 func (s *LockFreeStack) casTop(old, new *node) bool {
-	// 将 *node 类型的指针转换为 unsafe.Pointer 以供原子操作使用
-	oldPtr := unsafe.Pointer(old)
-	newPtr := unsafe.Pointer(new)
-	return atomic.CompareAndSwapPointer(&s.top, oldPtr, newPtr)
+	return s.top.CompareAndSwap(old, new)
 }
 
 // Push 将一个值压入栈顶
@@ -50,8 +45,8 @@ func (s *LockFreeStack) Push(value interface{}) {
 		// 2. 将新节点的 next 指向旧的栈顶
 		newNode.next = oldTop
 
-		// 3. 使用辅助方法尝试进行 CAS 操作
-		//    如果成功，说明栈顶已经被更新，循环结束。
+		//  3. 使用辅助方法尝试进行 CAS 操作
+		//     如果成功，说明栈顶已经被更新，循环结束。
 		if s.casTop(oldTop, newNode) {
 			return
 		}

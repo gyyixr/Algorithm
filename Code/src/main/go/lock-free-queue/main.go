@@ -3,7 +3,6 @@ package main
 import (
 	"sync"
 	"sync/atomic"
-	"unsafe"
 )
 
 type Queue interface {
@@ -13,19 +12,22 @@ type Queue interface {
 
 // LKQueue 是一个无锁的无限队列。
 type LKQueue struct {
-	head unsafe.Pointer
-	tail unsafe.Pointer
+	head atomic.Pointer[node]
+	tail atomic.Pointer[node]
 }
 
 type node struct {
 	value interface{}
-	next  unsafe.Pointer
+	next  atomic.Pointer[node]
 }
 
 // NewLKQueue 返回一个空队列。
 func NewLKQueue() *LKQueue {
 	n := &node{}
-	return &LKQueue{head: unsafe.Pointer(n), tail: unsafe.Pointer(n)}
+	q := &LKQueue{}
+	q.head.Store(n)
+	q.tail.Store(n)
+	return q
 }
 
 // Enqueue 将给定的值 v 放入队列的尾部。
@@ -39,17 +41,17 @@ func NewLKQueue() *LKQueue {
 func (q *LKQueue) Enqueue(v interface{}) {
 	n := &node{value: v}
 	for {
-		tail := load(&q.tail)
-		next := load(&tail.next)
-		if tail == load(&q.tail) { // tail 和 next 是否一致？
+		tail := q.tail.Load()
+		next := tail.next.Load()
+		if tail == q.tail.Load() { // tail 和 next 是否一致？
 			if next == nil {
-				if cas(&tail.next, next, n) {
-					cas(&q.tail, tail, n) // 入队完成。尝试将 tail 指向插入的节点
+				if tail.next.CompareAndSwap(next, n) {
+					q.tail.CompareAndSwap(tail, n) // 入队完成。尝试将 tail 指向插入的节点
 					return
 				}
 			} else { // tail 没有指向最后一个节点
 				// 尝试将 tail 指向下一个节点
-				cas(&q.tail, tail, next)
+				q.tail.CompareAndSwap(tail, next)
 			}
 		}
 	}
@@ -66,35 +68,25 @@ func (q *LKQueue) Enqueue(v interface{}) {
 func (q *LKQueue) Dequeue() interface{} {
 	var t interface{}
 	for {
-		head := load(&q.head)
-		tail := load(&q.tail)
-		next := load(&head.next)
-		if head == load(&q.head) { // head、tail 和 next 是否一致？
+		head := q.head.Load()
+		tail := q.tail.Load()
+		next := head.next.Load()
+		if head == q.head.Load() { // head、tail 和 next 是否一致？
 			if head == tail { // 队列是否为空或 tail 落后？
 				if next == nil { // 队列是否为空？
 					return t
 				}
 				// tail 落后。尝试将其前移
-				cas(&q.tail, tail, next)
+				q.tail.CompareAndSwap(tail, next)
 			} else {
 				// 在 CAS 之前读取值，否则另一个出队操作可能会释放下一个节点
 				v := next.value
-				if cas(&q.head, head, next) {
+				if q.head.CompareAndSwap(head, next) {
 					return v // 出队完成。返回
 				}
 			}
 		}
 	}
-}
-
-func load(p *unsafe.Pointer) (n *node) {
-
-	return (*node)(atomic.LoadPointer(p))
-}
-
-func cas(p *unsafe.Pointer, old, new *node) (ok bool) {
-	return atomic.CompareAndSwapPointer(
-		p, unsafe.Pointer(old), unsafe.Pointer(new))
 }
 
 //=== slice-queue-end==========================================================
